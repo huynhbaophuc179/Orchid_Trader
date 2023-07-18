@@ -12,6 +12,7 @@ import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Icon from "react-native-vector-icons/Ionicons";
+import Cart from "./src/screens/Cart";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -54,16 +55,16 @@ function InsideLayout() {
       ></Tab.Screen>
       <Tab.Screen
         name="Cart"
-        component={HomeLayout}
+        component={Cart}
         options={{
-          headerShown: false,
+          headerShown: true,
           headerTintColor: "black",
           tabBarLabelStyle: {
             color: "black",
             fontWeight: "bold",
           },
           tabBarIcon: ({ focused }) => (
-            <Icon name={"ios-home"} size={25} color="black" />
+            <Icon name={"cart"} size={25} color="black" />
           ),
         }}
       ></Tab.Screen>

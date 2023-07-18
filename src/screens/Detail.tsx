@@ -106,6 +106,7 @@ const Detail: React.FunctionComponent<detailProps> = ({ navigation }) => {
           try {
             setDoc(data?.cartRef, { ...data.cart }, { merge: true });
             console.log("co gi do do");
+            alert("Added to cart");
           } catch (error: any) {
             console.log(error);
           }
@@ -116,16 +117,17 @@ const Detail: React.FunctionComponent<detailProps> = ({ navigation }) => {
           try {
             setDoc(
               data?.cartRef,
-              { prodcutId: product.id, count: 1 },
+              { productId: product.id, count: 1 },
               { merge: true }
             );
           } catch (error: any) {
             console.log(error);
           }
-
+          alert("Added new item to cart");
           console.log("cha co gi ca");
         }
       } else {
+        alert("Error adding to cart, please try later");
         console.log("loi roi");
       }
     }
