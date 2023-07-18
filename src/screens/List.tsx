@@ -8,9 +8,10 @@ import {
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
-import { FirebaseStore } from "../../firebaseConfig";
+import { FirebaseApp, FirebaseAuth, FirebaseStore } from "../../firebaseConfig";
 import { collection, addDoc, getDocs } from "firebase/firestore";
 import Detail from "./Detail";
+import { Button } from "react-native-paper";
 
 interface RouterProp {
   navigation: NavigationProp<any, any>;
@@ -66,12 +67,17 @@ const List = ({ navigation }: RouterProp) => {
           <Image style={style.image} source={{ uri: product.image }} />
         </View>
         <Text>{product.title}</Text>
+        <Text>Price: {product.price}</Text>
       </TouchableOpacity>
     );
+  };
+  const handleSignOut = () => {
+    FirebaseAuth.signOut();
   };
 
   return (
     <View style={{}}>
+      <Button onPress={handleSignOut}>Sign Out</Button>
       <FlatList
         data={product}
         renderItem={(item) => <CardItem product={item.item}></CardItem>}

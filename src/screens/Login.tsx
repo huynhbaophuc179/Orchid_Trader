@@ -12,6 +12,7 @@ import { FirebaseAuth } from "../../firebaseConfig";
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  signOut,
 } from "firebase/auth";
 // import type { FirebaseAuthError } from "";
 const Login = () => {
