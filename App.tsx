@@ -11,6 +11,7 @@ import { FirebaseAuth } from "./firebaseConfig";
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import Icon from "react-native-vector-icons/Ionicons";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -24,7 +25,8 @@ type Product = {
   description: string;
   price: number;
 };
-function InsideLayout() {
+
+function HomeLayout() {
   return (
     <InnerStack.Navigator>
       <InnerStack.Screen
@@ -38,10 +40,28 @@ function InsideLayout() {
         component={Detail}
         options={{}}
       ></InnerStack.Screen>
-      <Tab.Navigator>
-        <Tab.Screen name="Orchid Home" component={List}></Tab.Screen>
-      </Tab.Navigator>
     </InnerStack.Navigator>
+  );
+}
+function InsideLayout() {
+  return (
+    <Tab.Navigator>
+      <Tab.Screen
+        name="Orchid Home"
+        component={HomeLayout}
+        options={{
+          headerShown: false,
+          headerTintColor: "black",
+          tabBarLabelStyle: {
+            color: "black",
+            fontWeight: "bold",
+          },
+          tabBarIcon: ({ focused }) => (
+            <Icon name={"ios-home"} size={25} color="black" />
+          ),
+        }}
+      ></Tab.Screen>
+    </Tab.Navigator>
   );
 }
 
