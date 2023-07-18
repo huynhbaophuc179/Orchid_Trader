@@ -1,10 +1,10 @@
 import {
-  View,
-  Text,
-  FlatList,
   StyleSheet,
-  Image,
+  Text,
+  View,
+  FlatList,
   TouchableOpacity,
+  Image,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import {
@@ -12,66 +12,39 @@ import {
   useNavigation,
   useIsFocused,
 } from "@react-navigation/native";
-import { FirebaseApp, FirebaseAuth, FirebaseStore } from "../../firebaseConfig";
-import { collection, addDoc, getDocs } from "firebase/firestore";
-import Detail from "./Detail";
-import { Button } from "react-native-paper";
-
 interface RouterProp {
   navigation: NavigationProp<any, any>;
 }
 
-const List = ({ navigation }: RouterProp) => {
+const Cart = ({ navigation }: RouterProp) => {
   const [product, setProduct] = useState<Product[]>([]);
-  const isFocused = useIsFocused();
-  useEffect(() => {
-    const fetchData = async (): Promise<void> => {
-      console.log("this thing just ran");
-      try {
-        const productList: Product[] = [];
-        const data = await getDocs(collection(FirebaseStore, "product"));
 
-        data.forEach((doc) => {
-          const productData = doc.data();
-          const product: Product = { id: doc.id, ...productData } as Product;
-          productList.push(product);
-        });
-
-        setProduct(productList);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchData();
-  }, [isFocused]);
-  // const navigator = useNavigation();
   function handleDetailPress(product: Product) {
     navigation.navigate("Detail", { product });
   }
   const CardItem = ({ product }: { product: Product }) => {
     return (
       <TouchableOpacity
-        style={style.card}
+        style={styles.card}
         onPress={(event) => {
           handleDetailPress(product);
         }}
       >
-        <View style={style.imgWrapper}>
-          <Image style={style.image} source={{ uri: product.image }} />
+        <View style={styles.imgWrapper}>
+          <Image style={styles.image} source={{ uri: product.image }} />
         </View>
         <Text>{product.title}</Text>
         <Text>Price: {product.price}</Text>
       </TouchableOpacity>
     );
   };
-  const handleSignOut = () => {
-    FirebaseAuth.signOut();
-  };
+  useEffect(() => {
+    return () => {};
+  }, []);
 
   return (
     <View style={{}}>
-      <Button onPress={handleSignOut}>Sign Out</Button>
+      {/* <Button onPress={handleSignOut}>Sign Out</Button> */}
       <FlatList
         data={product}
         renderItem={(item) => <CardItem product={item.item}></CardItem>}
@@ -84,9 +57,9 @@ const List = ({ navigation }: RouterProp) => {
   );
 };
 
-export default List;
+export default Cart;
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
   card: {
     flex: 1,
     // alignItems: "center",

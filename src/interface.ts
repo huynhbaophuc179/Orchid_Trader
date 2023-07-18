@@ -8,7 +8,7 @@ interface Product {
 }
 
 interface Cart {
-  product: Product;
+  productId: Product;
 
-  ammount: number;
+  count: number;
 }

@@ -17,15 +17,6 @@ const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 const InnerStack = createNativeStackNavigator();
 
-type Product = {
-  image: string;
-  id: string;
-  title: string;
-  category: string;
-  description: string;
-  price: number;
-};
-
 function HomeLayout() {
   return (
     <InnerStack.Navigator>
@@ -48,6 +39,21 @@ function InsideLayout() {
     <Tab.Navigator>
       <Tab.Screen
         name="Orchid Home"
+        component={HomeLayout}
+        options={{
+          headerShown: false,
+          headerTintColor: "black",
+          tabBarLabelStyle: {
+            color: "black",
+            fontWeight: "bold",
+          },
+          tabBarIcon: ({ focused }) => (
+            <Icon name={"ios-home"} size={25} color="black" />
+          ),
+        }}
+      ></Tab.Screen>
+      <Tab.Screen
+        name="Cart"
         component={HomeLayout}
         options={{
           headerShown: false,
