@@ -33,6 +33,7 @@ function HomeLayout() {
     <Stack.Navigator>
       <Stack.Screen name="Orchid Home" component={List} />
       <Stack.Screen name="Detail" component={Detail} />
+      <Stack.Screen name="Order" component={Order} />
     </Stack.Navigator>
   );
 }
@@ -68,7 +69,7 @@ function InsideLayout() {
         }}
       />
       <Tab.Screen
-        name="Order"
+        name="OrderScreen"
         component={OrderList}
         options={{
           tabBarLabelStyle: {

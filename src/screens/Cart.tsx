@@ -230,7 +230,7 @@ const Cart = ({ navigation }: RouterProp) => {
     );
   };
   const handleOrder = () => {
-    navigation.navigate("OrderScreen");
+    navigation.navigate("Order");
   };
 
   return (
