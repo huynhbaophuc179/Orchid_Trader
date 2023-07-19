@@ -103,7 +103,7 @@ const Cart = ({ navigation }: RouterProp) => {
       setIsLoading(false);
       setButtonPressed(false);
     });
-  }, [isFocused, buttonPressed, isFocused]);
+  }, [isFocused, buttonPressed]);
 
   function handleDetailPress(product: Product | null) {
     navigation.navigate("Detail", { product });
