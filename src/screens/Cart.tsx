@@ -152,6 +152,13 @@ const Cart = ({ navigation }: RouterProp) => {
 
     setShowModal(false);
   };
+  const handleShowDeleteAll = () => {
+    setShowModalDeleteAll(true);
+  };
+  const handleConfirmDeleteAll = () => {
+    handleDeleteAll();
+    setShowModalDeleteAll(false);
+  };
   const handleDeleteAll = () => {
     try {
       if (user) {
@@ -268,7 +275,7 @@ const Cart = ({ navigation }: RouterProp) => {
             visible={showModalDeleteAll}
             animationType="slide"
             transparent={true}
-            onRequestClose={() => setShowModal(false)}
+            onRequestClose={() => setShowModalDeleteAll(false)}
           >
             <View style={styles.modalContainer}>
               <View style={styles.modalContent}>
@@ -279,15 +286,17 @@ const Cart = ({ navigation }: RouterProp) => {
                 <View style={styles.modalButtons}>
                   <TouchableOpacity
                     style={styles.modalButton}
-                    onPress={() => setShowModal(false)}
+                    onPress={() => setShowModalDeleteAll(false)}
                   >
                     <Text style={styles.modalButtonText}>Cancel</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={[styles.modalButton, styles.modalButtonDelete]}
-                    onPress={handleDeleteConfirmed}
+                    onPress={handleConfirmDeleteAll}
                   >
-                    <Text style={styles.modalButtonText}>Delete</Text>
+                    <Text style={{ color: "crimson", fontWeight: "bold" }}>
+                      Delete
+                    </Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -302,7 +311,7 @@ const Cart = ({ navigation }: RouterProp) => {
                 style={styles.button1}
                 onPress={() => {
                   // Handle the action for the first button here
-                  handleDeleteAll();
+                  handleShowDeleteAll();
                 }}
               >
                 <Text style={styles.buttonText1}>Clear all</Text>
@@ -417,7 +426,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
   },
   modalButtonDelete: {
-    backgroundColor: "red",
+    backgroundColor: "crimsom",
   },
   modalButtonText: {
     color: "black",
