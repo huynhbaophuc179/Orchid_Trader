@@ -1,0 +1,14 @@
+[33ma9ed5e5[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m)[m HEAD@{0}: commit: added ordering logic
+[33m945bbf1[m HEAD@{1}: commit: added order handling
+[33mfad5cfb[m HEAD@{2}: commit: merged branch
+[33m108fcbc[m HEAD@{3}: pull htpp master: Merge made by the 'ort' strategy.
+[33m1f2a313[m HEAD@{4}: commit: added order and modal handeling for components
+[33m56caf78[m HEAD@{5}: commit: added routing for order
+[33mfaf19e6[m HEAD@{6}: commit: added the remove cart button
+[33m105f691[m HEAD@{7}: commit: cart screen logic clean up
+[33me2501b2[m HEAD@{8}: commit: added the view all in cart screen
+[33m63ad942[m HEAD@{9}: commit: added add to cart functionality
+[33m6fd59e7[m HEAD@{10}: commit: added signout button
+[33m02c9c16[m HEAD@{11}: commit: fixed apptsx error
+[33mbffdbe3[m HEAD@{12}: commit: First commit, basic navigation, login and loading data from firebase
+[33m0519978[m HEAD@{13}: commit (initial): Initial commit
