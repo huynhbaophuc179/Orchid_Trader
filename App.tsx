@@ -13,6 +13,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Icon from "react-native-vector-icons/Ionicons";
 import Cart from "./src/screens/Cart";
+import Order from "./src/screens/Order";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -30,6 +31,20 @@ function HomeLayout() {
 
         name="Detail"
         component={Detail}
+        options={{}}
+      ></InnerStack.Screen>
+      <InnerStack.Screen
+        // initialParams={ product: Product }}
+
+        name="OrderScreen"
+        component={Order}
+        options={{}}
+      ></InnerStack.Screen>
+      <InnerStack.Screen
+        // initialParams={ product: Product }}
+
+        name="Cart"
+        component={Cart}
         options={{}}
       ></InnerStack.Screen>
     </InnerStack.Navigator>
@@ -65,6 +80,21 @@ function InsideLayout() {
           },
           tabBarIcon: ({ focused }) => (
             <Icon name={"cart"} size={25} color="black" />
+          ),
+        }}
+      ></Tab.Screen>
+      <Tab.Screen
+        name="Order"
+        component={Order}
+        options={{
+          headerShown: true,
+          headerTintColor: "black",
+          tabBarLabelStyle: {
+            color: "black",
+            fontWeight: "bold",
+          },
+          tabBarIcon: ({ focused }) => (
+            <Icon name={"list"} size={25} color="black" />
           ),
         }}
       ></Tab.Screen>

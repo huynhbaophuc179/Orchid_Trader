@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Image,
   ActivityIndicator,
+  Modal,
 } from "react-native";
 import {
   NavigationProp,
@@ -23,6 +24,7 @@ import {
 } from "firebase/firestore";
 import { FirebaseApp, FirebaseAuth, FirebaseStore } from "../../firebaseConfig";
 import { User } from "firebase/auth";
+import Icon from "react-native-vector-icons/Ionicons";
 interface RouterProp {
   navigation: NavigationProp<any, any>;
 }
@@ -38,6 +40,12 @@ const Cart = ({ navigation }: RouterProp) => {
   const [user, setUser] = useState<User | null>(FirebaseAuth.currentUser);
   const [isLoading, setIsLoading] = useState(true);
   const [buttonPressed, setButtonPressed] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<CartWithProduct>();
+  const [showModalDeleteAll, setShowModalDeleteAll] = useState(false);
+  // const isFocused = useIsFocused();
+
+  // userIsFocus;
   useEffect(() => {
     const fetchProductById = async (
       productId: string
@@ -95,10 +103,9 @@ const Cart = ({ navigation }: RouterProp) => {
       setIsLoading(false);
       setButtonPressed(false);
     });
-  }, [isFocused, buttonPressed]);
+  }, [isFocused, buttonPressed, isFocused]);
 
   function handleDetailPress(product: Product | null) {
-    console.log(product);
     navigation.navigate("Detail", { product });
   }
   const getTotalAmount = (): number => {
@@ -109,6 +116,41 @@ const Cart = ({ navigation }: RouterProp) => {
       }
     });
     return total;
+  };
+  const showDeleteConfirmationModal = (item: CartWithProduct) => {
+    setItemToDelete(item);
+    setShowModal(true);
+  };
+  const handleRemoveItem = (cart: CartWithProduct) => {
+    // Implement the remove item logic here.
+    // You can use the cart.productId to identify the item to remove.
+    try {
+      if (user) {
+        const cartRef = doc(
+          FirebaseStore,
+          "customer",
+          user.uid,
+          "cart",
+          cart.cart.productId
+        );
+
+        deleteDoc(cartRef);
+        setButtonPressed(true);
+        alert("Product Removed");
+      } else {
+        alert("Error removing cart");
+      }
+    } catch (error: any) {}
+  };
+  const handleDeleteConfirmed = () => {
+    // Implement the logic to delete the item from the cart
+    // You can use itemToDelete.cart.productId to identify the item to remove.
+    // Then close the modal.
+    if (itemToDelete) {
+      handleRemoveItem(itemToDelete);
+    }
+
+    setShowModal(false);
   };
   const handleDeleteAll = () => {
     try {
@@ -129,12 +171,16 @@ const Cart = ({ navigation }: RouterProp) => {
       } else {
         alert("Error removing cart");
       }
-    } catch (error: any) {}
+    } catch (error: any) {
+      console.log("error", error);
+      alert("error deleting");
+    }
   };
   const CardItem = ({ cart }: { cart: CartWithProduct }) => {
     const totalPricing = cart.product
       ? cart.cart.count * cart.product?.price
       : "N/A";
+
     return (
       <>
         {cart.product ? (
@@ -144,6 +190,16 @@ const Cart = ({ navigation }: RouterProp) => {
               handleDetailPress(cart.product);
             }}
           >
+            <View style={styles.removeIconContainer}>
+              <TouchableOpacity
+                onPress={(data) => {
+                  showDeleteConfirmationModal(cart);
+                }}
+              >
+                <Icon name="close-circle-outline" size={20} color="red" />
+              </TouchableOpacity>
+            </View>
+
             <View style={styles.imgWrapper}>
               <Image
                 style={styles.image}
@@ -166,21 +222,77 @@ const Cart = ({ navigation }: RouterProp) => {
     );
   };
 
-  useEffect(() => {
-    return () => {};
-  }, []);
-
   return (
     <>
       {isLoading === true ? (
         <ActivityIndicator size={"large"} />
       ) : (
         <View style={{ flex: 1 }}>
+          {cart.length > 0 ? (
+            <Text></Text>
+          ) : (
+            <Text style={{ padding: 20 }}>An Empty List</Text>
+          )}
           <FlatList
             data={cart}
             renderItem={(item) => <CardItem cart={item.item}></CardItem>}
             keyExtractor={(item) => item.cart.productId}
           />
+          <Modal
+            visible={showModal}
+            animationType="slide"
+            transparent={true}
+            onRequestClose={() => setShowModal(false)}
+          >
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <Text>Are you sure you want to delete this item?</Text>
+                <View style={styles.modalButtons}>
+                  <TouchableOpacity
+                    style={styles.modalButton}
+                    onPress={() => setShowModal(false)}
+                  >
+                    <Text style={styles.modalButtonText}>Cancel</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.modalButton, styles.modalButtonDelete]}
+                    onPress={handleDeleteConfirmed}
+                  >
+                    <Text style={styles.modalButtonText}>Delete</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </Modal>
+          <Modal
+            visible={showModalDeleteAll}
+            animationType="slide"
+            transparent={true}
+            onRequestClose={() => setShowModal(false)}
+          >
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <Text>
+                  Are you sure you want to delete every item from the shopping
+                  cart?
+                </Text>
+                <View style={styles.modalButtons}>
+                  <TouchableOpacity
+                    style={styles.modalButton}
+                    onPress={() => setShowModal(false)}
+                  >
+                    <Text style={styles.modalButtonText}>Cancel</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.modalButton, styles.modalButtonDelete]}
+                    onPress={handleDeleteConfirmed}
+                  >
+                    <Text style={styles.modalButtonText}>Delete</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </Modal>
           <View style={styles.totalAmountContainer}>
             <Text>Total In Cart: {getTotalAmount()} $</Text>
           </View>
@@ -193,7 +305,7 @@ const Cart = ({ navigation }: RouterProp) => {
                   handleDeleteAll();
                 }}
               >
-                <Text style={styles.buttonText1}>Remove Cart</Text>
+                <Text style={styles.buttonText1}>Clear all</Text>
               </TouchableOpacity>
             </View>
             <TouchableOpacity
@@ -273,6 +385,42 @@ const styles = StyleSheet.create({
   },
   buttonText2: {
     color: "white",
+    fontWeight: "bold",
+  },
+  removeIconContainer: {
+    position: "absolute",
+    top: 5,
+    right: 5,
+    zIndex: 1,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    backgroundColor: "white",
+    borderRadius: 10,
+    padding: 20,
+    width: "80%",
+  },
+  modalButtons: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    marginTop: 20,
+  },
+  modalButton: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 5,
+    marginHorizontal: 10,
+  },
+  modalButtonDelete: {
+    backgroundColor: "red",
+  },
+  modalButtonText: {
+    color: "black",
     fontWeight: "bold",
   },
 });
