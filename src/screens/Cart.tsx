@@ -13,10 +13,16 @@ import {
   useNavigation,
   useIsFocused,
 } from "@react-navigation/native";
-import { collection, doc, getDoc, getDocs } from "firebase/firestore";
-import { FirebaseAuth, FirebaseStore } from "../../firebaseConfig";
+import {
+  collection,
+  deleteDoc,
+  deleteField,
+  doc,
+  getDoc,
+  getDocs,
+} from "firebase/firestore";
+import { FirebaseApp, FirebaseAuth, FirebaseStore } from "../../firebaseConfig";
 import { User } from "firebase/auth";
-
 interface RouterProp {
   navigation: NavigationProp<any, any>;
 }
@@ -31,7 +37,7 @@ const Cart = ({ navigation }: RouterProp) => {
   const isFocused = useIsFocused();
   const [user, setUser] = useState<User | null>(FirebaseAuth.currentUser);
   const [isLoading, setIsLoading] = useState(true);
-
+  const [buttonPressed, setButtonPressed] = useState(false);
   useEffect(() => {
     const fetchProductById = async (
       productId: string
@@ -87,8 +93,9 @@ const Cart = ({ navigation }: RouterProp) => {
 
     fetchData().then(() => {
       setIsLoading(false);
+      setButtonPressed(false);
     });
-  }, [isFocused]);
+  }, [isFocused, buttonPressed]);
 
   function handleDetailPress(product: Product | null) {
     console.log(product);
@@ -102,6 +109,27 @@ const Cart = ({ navigation }: RouterProp) => {
       }
     });
     return total;
+  };
+  const handleDeleteAll = () => {
+    try {
+      if (user) {
+        cart.forEach((element) => {
+          const cartRef = doc(
+            FirebaseStore,
+            "customer",
+            user.uid,
+            "cart",
+            element.cart.productId
+          );
+
+          deleteDoc(cartRef);
+          setButtonPressed(true);
+          alert("Your cart has been emptied");
+        });
+      } else {
+        alert("Error removing cart");
+      }
+    } catch (error: any) {}
   };
   const CardItem = ({ cart }: { cart: CartWithProduct }) => {
     const totalPricing = cart.product
@@ -147,22 +175,35 @@ const Cart = ({ navigation }: RouterProp) => {
       {isLoading === true ? (
         <ActivityIndicator size={"large"} />
       ) : (
-        <View style={{}}>
-          {/* <Button onPress={handleSignOut}>Sign Out</Button> */}
+        <View style={{ flex: 1 }}>
           <FlatList
             data={cart}
             renderItem={(item) => <CardItem cart={item.item}></CardItem>}
             keyExtractor={(item) => item.cart.productId}
-          ></FlatList>
-          <View
-            style={{
-              alignSelf: "flex-end",
-              justifyContent: "flex-end",
-              alignItems: "flex-end",
-              padding: 20,
-            }}
-          >
+          />
+          <View style={styles.totalAmountContainer}>
             <Text>Total In Cart: {getTotalAmount()} $</Text>
+          </View>
+          <View style={styles.buttonContainer}>
+            <View>
+              <TouchableOpacity
+                style={styles.button1}
+                onPress={() => {
+                  // Handle the action for the first button here
+                  handleDeleteAll();
+                }}
+              >
+                <Text style={styles.buttonText1}>Remove Cart</Text>
+              </TouchableOpacity>
+            </View>
+            <TouchableOpacity
+              style={styles.button2}
+              onPress={() => {
+                // Handle the action for the second button here
+              }}
+            >
+              <Text style={styles.buttonText2}>Order</Text>
+            </TouchableOpacity>
           </View>
         </View>
       )}
@@ -197,5 +238,41 @@ const styles = StyleSheet.create({
     flexDirection: "column-reverse",
     alignItems: "flex-end",
     marginHorizontal: 20,
+  },
+  totalAmountContainer: {
+    alignSelf: "flex-end",
+    justifyContent: "flex-end",
+    alignItems: "flex-end",
+    padding: 20,
+    marginHorizontal: 30,
+  },
+  buttonContainer: {
+    flexDirection: "row",
+
+    justifyContent: "space-around",
+    alignItems: "center",
+    paddingBottom: 20,
+  },
+  button1: {
+    backgroundColor: "crimson",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 10,
+  },
+  button2: {
+    backgroundColor: "black",
+    // width: 40,
+    // height: "auto",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 10,
+  },
+  buttonText1: {
+    color: "white",
+    fontWeight: "bold",
+  },
+  buttonText2: {
+    color: "white",
+    fontWeight: "bold",
   },
 });

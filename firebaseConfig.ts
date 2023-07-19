@@ -1,7 +1,7 @@
 import { initializeApp } from "@firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth } from "@firebase/auth";
-import { getFirestore } from "@firebase/firestore";
+import { getFirestore, writeBatch } from "@firebase/firestore";
 const firebaseConfig = {
   apiKey: "AIzaSyCBMh2SQYoNsyguYR8Sghr5erGmIkJYstw",
   authDomain: "birdtrader-32d24.firebaseapp.com",
@@ -18,3 +18,6 @@ export const FirebaseApp = initializeApp(firebaseConfig);
 export const FirebaseAuth = getAuth(FirebaseApp);
 // FirebaseAuth.sin;
 export const FirebaseStore = getFirestore(FirebaseApp);
+// FirebaseStore.
+// batch;
+// FirebaseStore.writeBatch();
