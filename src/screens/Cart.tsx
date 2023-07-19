@@ -47,10 +47,9 @@ const Cart = ({ navigation }: RouterProp) => {
 
   useEffect(() => {
     const fetchProductById = async (
-      productId: string
+        productId: string
     ): Promise<Product | null> => {
       try {
-        console.log("cai nay cung chay ne");
         const productRef = doc(FirebaseStore, "product", productId);
         const productSnapshot = await getDoc(productRef);
 
@@ -76,7 +75,7 @@ const Cart = ({ navigation }: RouterProp) => {
         const curUser: User | null = FirebaseAuth.currentUser;
         if (curUser) {
           const data = await getDocs(
-            collection(FirebaseStore, "customer", curUser.uid, "cart")
+              collection(FirebaseStore, "customer", curUser.uid, "cart")
           );
 
           const fetchPromises = data.docs.map(async (item) => {
@@ -127,11 +126,11 @@ const Cart = ({ navigation }: RouterProp) => {
     try {
       if (user) {
         const cartRef = doc(
-          FirebaseStore,
-          "customer",
-          user.uid,
-          "cart",
-          cart.cart.productId
+            FirebaseStore,
+            "customer",
+            user.uid,
+            "cart",
+            cart.cart.productId
         );
 
         deleteDoc(cartRef);
@@ -164,11 +163,11 @@ const Cart = ({ navigation }: RouterProp) => {
       if (user) {
         cart.forEach((element) => {
           const cartRef = doc(
-            FirebaseStore,
-            "customer",
-            user.uid,
-            "cart",
-            element.cart.productId
+              FirebaseStore,
+              "customer",
+              user.uid,
+              "cart",
+              element.cart.productId
           );
 
           deleteDoc(cartRef);
@@ -186,152 +185,157 @@ const Cart = ({ navigation }: RouterProp) => {
 
   const CardItem = ({ cart }: { cart: CartWithProduct }) => {
     const totalPricing = cart.product
-      ? cart.cart.count * cart.product?.price
-      : "N/A";
+        ? cart.cart.count * cart.product?.price
+        : "N/A";
 
     return (
-      <>
-        {cart.product ? (
-          <TouchableOpacity
-            style={styles.card}
-            onPress={(event) => {
-              handleDetailPress(cart.product);
-            }}
-          >
-            <View style={styles.removeIconContainer}>
+        <>
+          {cart.product ? (
               <TouchableOpacity
-                onPress={(data) => {
-                  showDeleteConfirmationModal(cart);
-                }}
+                  style={styles.card}
+                  onPress={(event) => {
+                    handleDetailPress(cart.product);
+                  }}
               >
-                <Icon name="close-circle-outline" size={20} color="red" />
-              </TouchableOpacity>
-            </View>
+                <View style={styles.removeIconContainer}>
+                  <TouchableOpacity
+                      onPress={(data) => {
+                        showDeleteConfirmationModal(cart);
+                      }}
+                  >
+                    <Icon name="close-circle-outline" size={20} color="red" />
+                  </TouchableOpacity>
+                </View>
 
-            <View style={styles.imgWrapper}>
-              <Image
-                style={styles.image}
-                source={{ uri: cart.product.image }}
-              />
-            </View>
-            <View style={styles.innerContainer}>
-              <Text>Name: {cart.product.title}</Text>
-              <Text>Price: {cart.product.price}</Text>
-              <Text>In Cart: {cart.cart.count}</Text>
-            </View>
-            <View style={styles.priceTotalContainer}>
-              <Text>Total: {totalPricing} $</Text>
-            </View>
-          </TouchableOpacity>
-        ) : (
-          <ActivityIndicator />
-        )}
-      </>
+                <View style={styles.imgWrapper}>
+                  {cart.product.image ? (
+                      <Image
+                          style={styles.image}
+                          source={{ uri: cart.product.image }}
+                      />
+                  ) : (
+                      <Image
+                          style={styles.image}
+                          source={require("../../assets/skeleton_plant.png")}
+                      />
+                  )}
+                </View>
+                <View style={styles.innerContainer}>
+                  <Text style={styles.title}>{cart.product.title}</Text>
+                  <Text style={styles.price}>Price: {cart.product.price}</Text>
+                  <Text style={styles.count}>In Cart: {cart.cart.count}</Text>
+                </View>
+                <View style={styles.totalContainer}>
+                  <Text style={styles.total}>Total: {totalPricing} $</Text>
+                </View>
+              </TouchableOpacity>
+          ) : (
+              <ActivityIndicator />
+          )}
+        </>
     );
   };
+
   const handleOrder = () => {
     navigation.navigate("Order");
   };
 
   return (
-    <>
-      {isLoading === true ? (
-        <ActivityIndicator size={"large"} />
-      ) : (
-        <View style={{ flex: 1 }}>
-          {cart.length > 0 ? (
-            <Text></Text>
-          ) : (
-            <Text style={{ padding: 20 }}>An Empty List</Text>
-          )}
-          <FlatList
-            data={cart}
-            renderItem={(item) => <CardItem cart={item.item}></CardItem>}
-            keyExtractor={(item) => item.cart.productId}
-          />
-          <Modal
+      <>
+        {isLoading === true ? (
+            <ActivityIndicator size="large" style={styles.loadingIndicator} />
+        ) : (
+            <View style={styles.container}>
+              {cart.length > 0 ? (
+                  <>
+                    <FlatList
+                        data={cart}
+                        renderItem={(item) => <CardItem cart={item.item} />}
+                        keyExtractor={(item) => item.cart.productId}
+                    />
+                    <View style={styles.totalAmountContainer}>
+                      <Text style={styles.totalAmount}>
+                        Total In Cart: {getTotalAmount()} $
+                      </Text>
+                    </View>
+                    <View style={styles.buttonContainer}>
+                      <TouchableOpacity
+                          style={styles.button1}
+                          onPress={handleShowDeleteAll}
+                      >
+                        <Text style={styles.buttonText1}>Clear all</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                          style={styles.button2}
+                          onPress={handleOrder}
+                      >
+                        <Text style={styles.buttonText2}>Order</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </>
+              ) : (
+                  <Text style={styles.emptyListText}>An Empty List</Text>
+              )}
+            </View>
+        )}
+
+        <Modal
             visible={showModal}
             animationType="slide"
             transparent={true}
             onRequestClose={() => setShowModal(false)}
-          >
-            <View style={styles.modalContainer}>
-              <View style={styles.modalContent}>
-                <Text>Are you sure you want to delete this item?</Text>
-                <View style={styles.modalButtons}>
-                  <TouchableOpacity
-                    style={styles.modalButton}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalText}>
+                Are you sure you want to delete this item?
+              </Text>
+              <View style={styles.modalButtons}>
+                <TouchableOpacity
+                    style={[styles.modalButton, styles.modalButtonCancel]}
                     onPress={() => setShowModal(false)}
-                  >
-                    <Text style={styles.modalButtonText}>Cancel</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
+                >
+                  <Text style={styles.modalButtonText}>Cancel</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
                     style={[styles.modalButton, styles.modalButtonDelete]}
                     onPress={handleDeleteConfirmed}
-                  >
-                    <Text style={styles.modalButtonText}>Delete</Text>
-                  </TouchableOpacity>
-                </View>
+                >
+                  <Text style={styles.modalButtonText}>Delete</Text>
+                </TouchableOpacity>
               </View>
             </View>
-          </Modal>
-          <Modal
+          </View>
+        </Modal>
+        <Modal
             visible={showModalDeleteAll}
             animationType="slide"
             transparent={true}
             onRequestClose={() => setShowModalDeleteAll(false)}
-          >
-            <View style={styles.modalContainer}>
-              <View style={styles.modalContent}>
-                <Text>
-                  Are you sure you want to delete every item from the shopping
-                  cart?
-                </Text>
-                <View style={styles.modalButtons}>
-                  <TouchableOpacity
-                    style={styles.modalButton}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalText}>
+                Are you sure you want to delete every item from the shopping cart?
+              </Text>
+              <View style={styles.modalButtons}>
+                <TouchableOpacity
+                    style={[styles.modalButton, styles.modalButtonCancel]}
                     onPress={() => setShowModalDeleteAll(false)}
-                  >
-                    <Text style={styles.modalButtonText}>Cancel</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
+                >
+                  <Text style={styles.modalButtonText}>Cancel</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
                     style={[styles.modalButton, styles.modalButtonDelete]}
                     onPress={handleConfirmDeleteAll}
-                  >
-                    <Text style={{ color: "crimson", fontWeight: "bold" }}>
-                      Delete
-                    </Text>
-                  </TouchableOpacity>
-                </View>
+                >
+                  <Text style={styles.modalButtonText}>Delete All</Text>
+                </TouchableOpacity>
               </View>
             </View>
-          </Modal>
-          <View style={styles.totalAmountContainer}>
-            <Text>Total In Cart: {getTotalAmount()} $</Text>
           </View>
-          <View style={styles.buttonContainer}>
-            <View>
-              <TouchableOpacity
-                style={styles.button1}
-                onPress={() => {
-                  handleShowDeleteAll();
-                }}
-              >
-                <Text style={styles.buttonText1}>Clear all</Text>
-              </TouchableOpacity>
-            </View>
-            <TouchableOpacity
-              style={styles.button2}
-              onPress={() => {
-                handleOrder();
-              }}
-            >
-              <Text style={styles.buttonText2}>Order</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      )}
-    </>
+        </Modal>
+      </>
   );
 };
 
@@ -339,17 +343,27 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  loadingIndicator: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   emptyListText: {
     padding: 20,
     textAlign: "center",
+    fontSize: 18,
+    fontWeight: "bold",
   },
   card: {
     flex: 1,
     flexDirection: "row",
     margin: 10,
-    borderColor: "black",
+    borderColor: "#888",
     borderWidth: 1,
     borderRadius: 10,
+    backgroundColor: "#FFF",
+    padding: 10,
+    alignItems: "center",
   },
   imgWrapper: {},
   image: {
@@ -359,21 +373,42 @@ const styles = StyleSheet.create({
   },
   innerContainer: {
     flex: 1,
+    paddingLeft: 10,
     justifyContent: "space-between",
-    paddingHorizontal: 20,
   },
-  priceTotalContainer: {
+  title: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 5,
+  },
+  price: {
+    fontSize: 14,
+    color: "#888",
+    marginBottom: 5,
+  },
+  count: {
+    fontSize: 14,
+    color: "#888",
+  },
+  totalContainer: {
     flex: 1,
     flexDirection: "column-reverse",
     alignItems: "flex-end",
-    marginHorizontal: 20,
+    marginRight: 10,
+  },
+  total: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#333",
   },
   totalAmountContainer: {
     alignSelf: "flex-end",
-    justifyContent: "flex-end",
-    alignItems: "flex-end",
     padding: 20,
-    marginHorizontal: 30,
+    marginRight: 30,
+  },
+  totalAmount: {
+    fontSize: 16,
+    fontWeight: "bold",
   },
   buttonContainer: {
     flexDirection: "row",
@@ -419,6 +454,11 @@ const styles = StyleSheet.create({
     padding: 20,
     width: "80%",
   },
+  modalText: {
+    fontSize: 16,
+    marginBottom: 20,
+    textAlign: "center",
+  },
   modalButtons: {
     flexDirection: "row",
     justifyContent: "flex-end",
@@ -430,11 +470,14 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginHorizontal: 10,
   },
+  modalButtonCancel: {
+    backgroundColor: "#888",
+  },
   modalButtonDelete: {
     backgroundColor: "crimson",
   },
   modalButtonText: {
-    color: "black",
+    color: "white",
     fontWeight: "bold",
   },
 });

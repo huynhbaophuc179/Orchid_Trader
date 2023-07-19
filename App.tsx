@@ -30,7 +30,7 @@ const Drawer = createDrawerNavigator();
 
 function HomeLayout() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator initialRouteName={"Orchid Home"}>
       <Stack.Screen name="Orchid Home" component={List} />
       <Stack.Screen name="Detail" component={Detail} />
       <Stack.Screen name="Order" component={Order} />
@@ -40,7 +40,7 @@ function HomeLayout() {
 
 function InsideLayout() {
   return (
-    <Tab.Navigator>
+    <Tab.Navigator initialRouteName={"Home"}>
       <Tab.Screen
         name="Home"
         component={HomeLayout}
@@ -79,19 +79,6 @@ function InsideLayout() {
           },
           tabBarIcon: ({ focused }) => (
             <Icon name={"list"} size={25} color="black" />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Profile"
-        component={Profile}
-        options={{
-          tabBarLabelStyle: {
-            color: "black",
-            fontWeight: "bold",
-          },
-          tabBarIcon: ({ focused }) => (
-            <Icon name={"person"} size={25} color="black" />
           ),
         }}
       />
@@ -134,7 +121,7 @@ export default function App() {
         {user ? (
           <Drawer.Navigator drawerContent={DrawerContent}>
             <Drawer.Screen
-              name="Home"
+              name="Homepage"
               options={{ headerShown: false }}
               component={InsideLayout}
             />

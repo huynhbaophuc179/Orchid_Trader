@@ -1,5 +1,5 @@
 interface Product {
-  image: string;
+  image: string | null;
   id: string;
   title: string;
   category: string;

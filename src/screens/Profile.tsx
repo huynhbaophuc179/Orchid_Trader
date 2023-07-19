@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { TextInput, Button, Avatar } from "react-native-paper";
-import { FirebaseStore } from "../../firebaseConfig";
+import {FirebaseAuth, FirebaseStore} from "../../firebaseConfig";
 import { doc, setDoc } from "firebase/firestore";
 
 const Profile = () => {
@@ -25,22 +25,51 @@ const Profile = () => {
         }
     };
 
+    const handleSignOut = async () => {
+        try {
+            await FirebaseAuth.signOut();
+            console.log("User signed out successfully");
+        } catch (error) {
+            console.error("Error signing out:", error);
+        }
+    };
+
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Profile</Text>
-            <View style={styles.avatarContainer}>
-                <Avatar.Image
-                    source={require("../../assets/avatar.png")}
-                    size={120}
-                    style={styles.avatar}
-                />
+            <View style={styles.leftContainer}>
+                <View style={styles.avatarContainer}>
+                    <Avatar.Image
+                        source={require("../../assets/avatar.png")}
+                        size={120}
+                        style={styles.avatar}
+                    />
+                </View>
+                <Button
+                    mode="outlined"
+                    onPress={() => handleSignOut}
+                    style={styles.signOutButton}
+                    labelStyle={styles.signOutButtonText}
+                    theme={{
+                        colors: {
+                            primary: "#007AFF",
+                        },
+                    }}
+                >
+                    Sign Out
+                </Button>
             </View>
-            <View style={styles.formContainer}>
+            <View style={styles.rightContainer}>
+                <Text style={styles.title}>Profile</Text>
                 <TextInput
                     label="Name"
                     value={name}
                     onChangeText={setName}
                     style={styles.input}
+                    theme={{
+                        colors: {
+                            primary: "#007AFF",
+                        },
+                    }}
                 />
                 <TextInput
                     label="Email"
@@ -48,6 +77,11 @@ const Profile = () => {
                     onChangeText={setEmail}
                     keyboardType="email-address"
                     style={styles.input}
+                    theme={{
+                        colors: {
+                            primary: "#007AFF",
+                        },
+                    }}
                 />
                 <TextInput
                     label="Phone"
@@ -55,16 +89,26 @@ const Profile = () => {
                     onChangeText={setPhone}
                     keyboardType="phone-pad"
                     style={styles.input}
+                    theme={{
+                        colors: {
+                            primary: "#007AFF",
+                        },
+                    }}
                 />
+                <Button
+                    mode="contained"
+                    onPress={handleSaveProfile}
+                    style={styles.button}
+                    labelStyle={styles.buttonText}
+                    theme={{
+                        colors: {
+                            primary: "#fff",
+                        },
+                    }}
+                >
+                    Save Profile
+                </Button>
             </View>
-            <Button
-                mode="contained"
-                onPress={handleSaveProfile}
-                style={styles.button}
-                labelStyle={styles.buttonText}
-            >
-                Save Profile
-            </Button>
         </View>
     );
 };
@@ -73,38 +117,49 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 16,
-        backgroundColor: "#f2f2f2",
+        backgroundColor: "#F9F9F9",
+    },
+    leftContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginBottom: 16,
+    },
+    avatarContainer: {
+        marginRight: 16,
+    },
+    avatar: {
+        backgroundColor: "#fff",
+    },
+    signOutButton: {
+        borderWidth: 1,
+        borderColor: "#007AFF",
+    },
+    signOutButtonText: {
+        fontSize: 16,
+        fontWeight: "bold",
+        color: "#007AFF",
+    },
+    rightContainer: {
+        flex: 1,
     },
     title: {
         fontSize: 24,
         fontWeight: "bold",
         marginBottom: 16,
         color: "#333",
-        alignSelf: "center",
-    },
-    avatarContainer: {
-        marginBottom: 24,
-        alignItems: "center",
-    },
-    avatar: {
-        backgroundColor: "white",
-    },
-    formContainer: {
-        marginBottom: 24,
     },
     input: {
         marginBottom: 16,
-        backgroundColor: "#fff",
     },
     button: {
-        alignSelf: "center",
-        borderRadius: 8,
-        marginBottom: 16,
-        width: "60%",
+        marginTop: 24,
+        width: "100%",
+        backgroundColor: "#007AFF",
     },
     buttonText: {
         fontSize: 18,
         fontWeight: "bold",
+        color: "#fff",
     },
 });
 

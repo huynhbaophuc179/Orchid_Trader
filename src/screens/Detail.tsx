@@ -6,19 +6,16 @@ import {
     StyleSheet,
     TouchableOpacity,
     ActivityIndicator,
-    Button,
 } from "react-native";
 import {
     NavigationProp,
-    RouteProp,
     useRoute,
 } from "@react-navigation/native";
-import {NativeStackNavigationProp} from "@react-navigation/native-stack";
-import {ParamListBase} from "@react-navigation/routers";
 import {doc, getDoc, setDoc} from "firebase/firestore";
 import {FirebaseAuth, FirebaseStore} from "../../firebaseConfig";
 import {User} from "firebase/auth";
-
+import { Ionicons } from "@expo/vector-icons";
+import { showMessage } from "react-native-flash-message";
 interface DetailProps {
     navigation: NavigationProp<any, any>;
 }
@@ -94,91 +91,120 @@ const Detail: React.FunctionComponent<DetailProps> = ({navigation}) => {
         }
     };
 
-  const handleAddToCart = async (user: User | null) => {
-    if (!user) return;
-    else {
-      const data = await getCart(user);
-      console.log(data?.cart);
-      if (data) {
-        if (data.cart) {
-          // console.log(data.cart);
-          console.log(data.cart);
-          const newCount = data.cart.count + count;
-          data.cart.count = newCount;
-          // const updatedData ;
-          try {
-            setDoc(data?.cartRef, { ...data.cart }, { merge: true });
-            console.log("co gi do do");
-            alert("Added to cart");
-          } catch (error: any) {
-            console.log(error);
-          }
-        } else {
-          const customerRef = doc(FirebaseStore, "customer", user.uid);
-          const customerSnapShot = getDoc(customerRef);
-          console.log((await customerSnapShot).exists);
-          try {
-            setDoc(
-              data?.cartRef,
-              { productId: product.id, count: count },
-              { merge: true }
-            );
-          } catch (error: any) {
-            console.log(error);
-          }
-          alert("Added new item to cart");
-          console.log("cha co gi ca");
+    const handleAddToCart = async (user: User | null) => {
+        if (!user) return;
+        else {
+            const data = await getCart(user);
+            console.log(data?.cart);
+            if (data) {
+                if (data.cart) {
+                    console.log(data.cart);
+                    const newCount = data.cart.count + count;
+                    data.cart.count = newCount;
+                    try {
+                        await setDoc(data?.cartRef, { ...data.cart }, { merge: true });
+                        console.log("co gi do do");
+                        showMessage({
+                            message: "Added to Cart",
+                            type: "success",
+                            icon: { icon: "success", position: "left" },
+                        });
+                    } catch (error: any) {
+                        console.log(error);
+                        showMessage({
+                            message: "Error adding to cart",
+                            type: "danger",
+                            icon: { icon: "danger", position: "left" },
+                        });
+                    }
+                } else {
+                    const customerRef = doc(FirebaseStore, "customer", user.uid);
+                    const customerSnapShot = getDoc(customerRef);
+                    console.log((await customerSnapShot).exists);
+                    try {
+                        await setDoc(data?.cartRef, { productId: product.id, count: count }, { merge: true });
+                        showMessage({
+                            message: "Added new item to cart",
+                            type: "success",
+                            icon: { icon: "success", position: "left" },
+                        });
+                        console.log("cha co gi ca");
+                    } catch (error: any) {
+                        console.log(error);
+                        showMessage({
+                            message: "Error adding to cart",
+                            type: "danger",
+                            icon: { icon: "danger", position: "left" },
+                        });
+                    }
+                }
+            } else {
+                showMessage({
+                    message: "Error adding to cart, please try again later",
+                    type: "danger",
+                    icon: { icon: "danger", position: "left" },
+                });
+                console.log("loi roi");
+            }
         }
-      } else {
-        alert("Error adding to cart, please try again later");
-        console.log("loi roi");
-      }
-    }
-  };
-  const handleAmountChange = (option: number) => {
-    if (option === 1 && count < 100) {
-      setCount(count + 1);
-    } else if (count > 1 && option === 0) setCount(count - 1);
-  };
-  const displayLoader = () => {
-    return (
-      <View style={styles.container}>
-        <View style={styles.upperContainer}>
-          <ActivityIndicator style={{ marginTop: 20 }} size={"large"} />
-        </View>
-      </View>
-    );
-  };
-  const displayProductDetail = () => {
-    return (
-      <View style={styles.container}>
-        <View style={styles.upperContainer}>
-          <Text style={styles.title}>{product.title}</Text>
-          <Text style={styles.category}>{product.category}</Text>
-        </View>
+    };
+    const handleAmountChange = (option: number) => {
+        if (option === 1 && count < 100) {
+            setCount(count + 1);
+        } else if (count > 1 && option === 0) setCount(count - 1);
+    };
+    const displayLoader = () => {
+        return (
+            <View style={styles.container}>
+                <View style={styles.upperContainer}>
+                    <ActivityIndicator style={{ marginTop: 20 }} size={"large"} />
+                </View>
+            </View>
+        );
+    };
+    const displayProductDetail = () => {
+        return (
+            <View style={styles.container}>
+                <View style={styles.upperContainer}>
+                    <Text style={styles.title}>{product.title}</Text>
+                    <Text style={styles.category}>{product.category}</Text>
+                </View>
 
                 <View style={styles.lowerContainer}>
                     <View style={styles.imageContainer}>
-                        <Image style={styles.image} source={{uri: product.image}}/>
+                        {product.image ? (
+                            <Image style={styles.image} source={{ uri: product.image }} />
+                        ) : (
+                            <Image
+                                style={styles.image}
+                                source={require("../../assets/skeleton_plant.png")}
+                            />
+                        )}
                         <TouchableOpacity
                             style={styles.button}
                             onPress={() => handleAddToCart(user)}
                         >
                             <Text style={styles.buttonText}>Add to Cart</Text>
+                            <Ionicons
+                                name="cart-outline"
+                                size={24}
+                                color="white"
+                                style={{ marginLeft: 8 }}
+                            />
                         </TouchableOpacity>
                         <View style={styles.counterContainer}>
                             <TouchableOpacity
                                 style={styles.counterButton}
                                 onPress={() => handleAmountChange(0)}
                             >
-                                <Text style={styles.counterButtonText}>-</Text>
+                                <Ionicons name="remove-outline" size={24} color="black" />
                             </TouchableOpacity>
                             <Text style={styles.counterText}>{count}</Text>
                             <TouchableOpacity
                                 style={styles.counterButton}
                                 onPress={() => handleAmountChange(1)}
                             >
-                                <Text style={styles.counterButtonText}>+</Text>
+                                <Ionicons name="add-outline" size={24} color="black" />
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -191,7 +217,6 @@ const Detail: React.FunctionComponent<DetailProps> = ({navigation}) => {
             </View>
         );
     };
-
     return (
         <>
             {!productFetched ? displayLoader() : displayProductDetail()}
@@ -202,26 +227,25 @@ const Detail: React.FunctionComponent<DetailProps> = ({navigation}) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
         backgroundColor: "#F9F9F9",
-        padding: 16,
     },
     upperContainer: {
         alignItems: "center",
+        marginTop: 32,
         marginBottom: 24,
     },
     lowerContainer: {
         flex: 1,
         alignItems: "center",
+        paddingHorizontal: 16,
     },
     imageContainer: {
         alignItems: "center",
-        marginBottom: 24,
+        marginBottom: 32,
     },
     image: {
-        width: "100%",
-        aspectRatio: 1.5,
+        width: 200,
+        height: 200,
         borderRadius: 10,
         marginBottom: 16,
     },
@@ -230,6 +254,7 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         textDecorationLine: "underline",
         marginBottom: 8,
+        color: "#333",
     },
     category: {
         fontSize: 18,
@@ -238,49 +263,55 @@ const styles = StyleSheet.create({
     },
     descriptionContainer: {
         width: "100%",
-        paddingHorizontal: 16,
     },
     descriptionTitle: {
         fontSize: 20,
         fontWeight: "bold",
         marginBottom: 8,
+        color: "#333",
     },
     description: {
         fontSize: 16,
+        color: "#555",
     },
     button: {
         backgroundColor: "#6C63FF",
-        paddingHorizontal: 16,
-        paddingVertical: 8,
-        borderRadius: 5,
-        marginBottom: 16,
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        paddingHorizontal: 24,
+        paddingVertical: 12,
+        borderRadius: 10,
+        marginBottom: 32,
+        elevation: 5,
     },
     buttonText: {
         color: "white",
         fontSize: 18,
         fontWeight: "bold",
-        textAlign: "center",
+        marginLeft: 8,
     },
     counterContainer: {
         flexDirection: "row",
         alignItems: "center",
+        marginBottom: 16,
     },
     counterButton: {
         backgroundColor: "#E0E0E0",
         paddingHorizontal: 16,
         paddingVertical: 8,
         borderRadius: 5,
-        marginHorizontal: 8,
     },
     counterButtonText: {
         color: "black",
         fontSize: 18,
         fontWeight: "bold",
-        textAlign: "center",
     },
     counterText: {
         fontSize: 18,
         fontWeight: "bold",
+        marginHorizontal: 16,
+        color: "#333",
     },
 });
 
