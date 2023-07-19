@@ -42,7 +42,7 @@ function InsideLayout() {
   return (
     <Tab.Navigator>
       <Tab.Screen
-        name="Orchid Home"
+        name="Home"
         component={HomeLayout}
         options={{
           headerShown: false,
@@ -69,9 +69,10 @@ function InsideLayout() {
         }}
       />
       <Tab.Screen
-        name="OrderScreen"
+        name="Order History"
         component={OrderList}
         options={{
+          headerShown: false,
           tabBarLabelStyle: {
             color: "black",
             fontWeight: "bold",
@@ -132,7 +133,11 @@ export default function App() {
       <NavigationContainer>
         {user ? (
           <Drawer.Navigator drawerContent={DrawerContent}>
-            <Drawer.Screen name="Home" component={InsideLayout} />
+            <Drawer.Screen
+              name="Home"
+              options={{ headerShown: false }}
+              component={InsideLayout}
+            />
             <Drawer.Screen name="Profile" component={Profile} />
           </Drawer.Navigator>
         ) : (
