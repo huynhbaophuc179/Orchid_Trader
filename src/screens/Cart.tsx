@@ -228,6 +228,9 @@ const Cart = ({ navigation }: RouterProp) => {
       </>
     );
   };
+  const handleOrder = () => {
+    navigation.navigate("OrderScreen");
+  };
 
   return (
     <>
@@ -310,7 +313,6 @@ const Cart = ({ navigation }: RouterProp) => {
               <TouchableOpacity
                 style={styles.button1}
                 onPress={() => {
-                  // Handle the action for the first button here
                   handleShowDeleteAll();
                 }}
               >
@@ -320,7 +322,7 @@ const Cart = ({ navigation }: RouterProp) => {
             <TouchableOpacity
               style={styles.button2}
               onPress={() => {
-                // Handle the action for the second button here
+                handleOrder();
               }}
             >
               <Text style={styles.buttonText2}>Order</Text>

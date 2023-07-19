@@ -1,5 +1,5 @@
 import { NavigationContainer } from "@react-navigation/native";
-import 'react-native-gesture-handler';
+import "react-native-gesture-handler";
 // import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
@@ -15,6 +15,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Icon from "react-native-vector-icons/Ionicons";
 import Cart from "./src/screens/Cart";
 import Order from "./src/screens/Order";
+import OrderList from "./src/screens/OrderList";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -86,7 +87,7 @@ function InsideLayout() {
       ></Tab.Screen>
       <Tab.Screen
         name="Order"
-        component={Order}
+        component={OrderList}
         options={{
           headerShown: true,
           headerTintColor: "black",
