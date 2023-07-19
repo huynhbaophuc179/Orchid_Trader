@@ -194,7 +194,6 @@ const Order = ({ navigation }: RouterProp) => {
     }
   };
 
-  // Function to handle the order submission
   const handleOrderSubmit = () => {
     // Validate the input fields
     if (!name.trim()) {
@@ -319,8 +318,6 @@ const Order = ({ navigation }: RouterProp) => {
   );
 };
 
-export default Order;
-
 const styles = StyleSheet.create({
   errorText: {
     color: "red",
@@ -328,22 +325,25 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    padding: 20,
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: "#f2f2f2",
+    paddingHorizontal: 20,
+    paddingTop: 50,
   },
   heading: {
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 20,
+    color: "#333",
   },
   input: {
     borderWidth: 1,
     borderColor: "#ccc",
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 15,
-    width: "100%",
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    marginBottom: 16,
+    fontSize: 16,
+    backgroundColor: "#fff",
   },
   submitButton: {
     backgroundColor: "blue",
@@ -456,3 +456,5 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
+
+export default Order;

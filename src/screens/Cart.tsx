@@ -25,6 +25,7 @@ import {
 import { FirebaseApp, FirebaseAuth, FirebaseStore } from "../../firebaseConfig";
 import { User } from "firebase/auth";
 import Icon from "react-native-vector-icons/Ionicons";
+
 interface RouterProp {
   navigation: NavigationProp<any, any>;
 }
@@ -43,9 +44,7 @@ const Cart = ({ navigation }: RouterProp) => {
   const [showModal, setShowModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<CartWithProduct>();
   const [showModalDeleteAll, setShowModalDeleteAll] = useState(false);
-  // const isFocused = useIsFocused();
 
-  // userIsFocus;
   useEffect(() => {
     const fetchProductById = async (
       productId: string
@@ -108,6 +107,7 @@ const Cart = ({ navigation }: RouterProp) => {
   function handleDetailPress(product: Product | null) {
     navigation.navigate("Detail", { product });
   }
+
   const getTotalAmount = (): number => {
     let total = 0;
     cart.forEach((item) => {
@@ -117,13 +117,13 @@ const Cart = ({ navigation }: RouterProp) => {
     });
     return total;
   };
+
   const showDeleteConfirmationModal = (item: CartWithProduct) => {
     setItemToDelete(item);
     setShowModal(true);
   };
+
   const handleRemoveItem = (cart: CartWithProduct) => {
-    // Implement the remove item logic here.
-    // You can use the cart.productId to identify the item to remove.
     try {
       if (user) {
         const cartRef = doc(
@@ -142,23 +142,23 @@ const Cart = ({ navigation }: RouterProp) => {
       }
     } catch (error: any) {}
   };
+
   const handleDeleteConfirmed = () => {
-    // Implement the logic to delete the item from the cart
-    // You can use itemToDelete.cart.productId to identify the item to remove.
-    // Then close the modal.
     if (itemToDelete) {
       handleRemoveItem(itemToDelete);
     }
-
     setShowModal(false);
   };
+
   const handleShowDeleteAll = () => {
     setShowModalDeleteAll(true);
   };
+
   const handleConfirmDeleteAll = () => {
     handleDeleteAll();
     setShowModalDeleteAll(false);
   };
+
   const handleDeleteAll = () => {
     try {
       if (user) {
@@ -183,6 +183,7 @@ const Cart = ({ navigation }: RouterProp) => {
       alert("error deleting");
     }
   };
+
   const CardItem = ({ cart }: { cart: CartWithProduct }) => {
     const totalPricing = cart.product
       ? cart.cart.count * cart.product?.price
@@ -334,9 +335,14 @@ const Cart = ({ navigation }: RouterProp) => {
   );
 };
 
-export default Cart;
-
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  emptyListText: {
+    padding: 20,
+    textAlign: "center",
+  },
   card: {
     flex: 1,
     flexDirection: "row",
@@ -371,7 +377,6 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: "row",
-
     justifyContent: "space-around",
     alignItems: "center",
     paddingBottom: 20,
@@ -384,8 +389,6 @@ const styles = StyleSheet.create({
   },
   button2: {
     backgroundColor: "black",
-    // width: 40,
-    // height: "auto",
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 10,
@@ -428,10 +431,12 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
   },
   modalButtonDelete: {
-    backgroundColor: "crimsom",
+    backgroundColor: "crimson",
   },
   modalButtonText: {
     color: "black",
     fontWeight: "bold",
   },
 });
+
+export default Cart;

@@ -70,15 +70,8 @@ const List = ({navigation}: RouterProp) => {
         );
     };
 
-    const handleSignOut = () => {
-        FirebaseAuth.signOut();
-    };
-
     return (
         <View style={styles.container}>
-            <Button onPress={handleSignOut} mode="contained" style={styles.signOutButton}>
-                Sign Out
-            </Button>
             <FlatList
                 data={product}
                 renderItem={({item}) => <CardItem product={item}/>}
