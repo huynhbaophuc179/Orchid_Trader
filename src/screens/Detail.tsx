@@ -25,7 +25,7 @@ interface routeParam {
 
 const Detail: React.FunctionComponent<detailProps> = ({ navigation }) => {
   const route = useRoute();
-  const [count, setCount] = useState(0);
+  const [count, setCount] = useState(1);
   const { product } = route.params as routeParam;
   const [user, setUser] = useState<User | null>(FirebaseAuth.currentUser);
   const [productFetched, setProductFetched] = useState<Product | null>(null);
@@ -117,7 +117,7 @@ const Detail: React.FunctionComponent<detailProps> = ({ navigation }) => {
           try {
             setDoc(
               data?.cartRef,
-              { productId: product.id, count: 1 },
+              { productId: product.id, count: count },
               { merge: true }
             );
           } catch (error: any) {
@@ -127,7 +127,7 @@ const Detail: React.FunctionComponent<detailProps> = ({ navigation }) => {
           console.log("cha co gi ca");
         }
       } else {
-        alert("Error adding to cart, please try later");
+        alert("Error adding to cart, please try again later");
         console.log("loi roi");
       }
     }
@@ -135,7 +135,7 @@ const Detail: React.FunctionComponent<detailProps> = ({ navigation }) => {
   const handleAmountChange = (option: number) => {
     if (option === 1 && count < 100) {
       setCount(count + 1);
-    } else if (count > 0 && option === 0) setCount(count - 1);
+    } else if (count > 1 && option === 0) setCount(count - 1);
   };
   const displayLoader = () => {
     return (

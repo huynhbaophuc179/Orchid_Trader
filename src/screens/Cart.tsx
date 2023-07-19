@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -5,8 +6,8 @@ import {
   FlatList,
   TouchableOpacity,
   Image,
+  ActivityIndicator,
 } from "react-native";
-import React, { useEffect, useState } from "react";
 import {
   NavigationProp,
   useNavigation,
@@ -15,8 +16,7 @@ import {
 import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 import { FirebaseAuth, FirebaseStore } from "../../firebaseConfig";
 import { User } from "firebase/auth";
-import { ActivityIndicator } from "react-native-paper";
-// import { Cart } from "../interface";
+
 interface RouterProp {
   navigation: NavigationProp<any, any>;
 }
@@ -25,11 +25,13 @@ interface CartWithProduct {
   cart: Cart;
   product: Product | null;
 }
+
 const Cart = ({ navigation }: RouterProp) => {
   const [cart, setCart] = useState<CartWithProduct[]>([]);
   const isFocused = useIsFocused();
   const [user, setUser] = useState<User | null>(FirebaseAuth.currentUser);
   const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
     const fetchProductById = async (
       productId: string
@@ -55,32 +57,29 @@ const Cart = ({ navigation }: RouterProp) => {
         return null;
       }
     };
+
     const fetchData = async (): Promise<void> => {
-      console.log("this thing just ran");
       try {
-        const cartList: CartWithProduct[] = [];
         const curUser: User | null = FirebaseAuth.currentUser;
         if (curUser) {
           const data = await getDocs(
             collection(FirebaseStore, "customer", curUser.uid, "cart")
           );
-          console.log(data);
-          data.forEach((item) => {
-            const cartData = item.data();
 
+          const fetchPromises = data.docs.map(async (item) => {
+            const cartData = item.data();
             const cart: Cart = { ...cartData } as Cart;
-            console.log("fetching ", cart);
-            fetchProductById(cart.productId).then((fetchedProduct) => {
-              cartList.push({ cart: cart, product: fetchedProduct });
-            });
-            // cartList.push(cart);
+            const fetchedProduct = await fetchProductById(cart.productId);
+            return { cart, product: fetchedProduct };
           });
 
-          setCart(cartList);
+          const results = await Promise.all(fetchPromises);
+          setCart(results);
         } else {
-          console.log("not logged in");
+          console.log("Not logged in");
         }
-        console.log(cartList);
+
+        setIsLoading(false);
       } catch (error) {
         console.error(error);
       }
@@ -90,11 +89,24 @@ const Cart = ({ navigation }: RouterProp) => {
       setIsLoading(false);
     });
   }, [isFocused]);
+
   function handleDetailPress(product: Product | null) {
     console.log(product);
     navigation.navigate("Detail", { product });
   }
+  const getTotalAmount = (): number => {
+    let total = 0;
+    cart.forEach((item) => {
+      if (item.product) {
+        total += item.cart.count * item.product.price;
+      }
+    });
+    return total;
+  };
   const CardItem = ({ cart }: { cart: CartWithProduct }) => {
+    const totalPricing = cart.product
+      ? cart.cart.count * cart.product?.price
+      : "N/A";
     return (
       <>
         {cart.product ? (
@@ -110,9 +122,14 @@ const Cart = ({ navigation }: RouterProp) => {
                 source={{ uri: cart.product.image }}
               />
             </View>
-            <Text>{cart.product.title}</Text>
-            <Text>Price: {cart.product.price}</Text>
-            <Text>In Cart: {cart.cart.count}</Text>
+            <View style={styles.innerContainer}>
+              <Text>Name: {cart.product.title}</Text>
+              <Text>Price: {cart.product.price}</Text>
+              <Text>In Cart: {cart.cart.count}</Text>
+            </View>
+            <View style={styles.priceTotalContainer}>
+              <Text>Total: {totalPricing} $</Text>
+            </View>
           </TouchableOpacity>
         ) : (
           <ActivityIndicator />
@@ -120,6 +137,7 @@ const Cart = ({ navigation }: RouterProp) => {
       </>
     );
   };
+
   useEffect(() => {
     return () => {};
   }, []);
@@ -135,10 +153,17 @@ const Cart = ({ navigation }: RouterProp) => {
             data={cart}
             renderItem={(item) => <CardItem cart={item.item}></CardItem>}
             keyExtractor={(item) => item.cart.productId}
-            numColumns={2}
-            contentContainerStyle={{ padding: 16 }}
-            columnWrapperStyle={{ justifyContent: "center" }}
           ></FlatList>
+          <View
+            style={{
+              alignSelf: "flex-end",
+              justifyContent: "flex-end",
+              alignItems: "flex-end",
+              padding: 20,
+            }}
+          >
+            <Text>Total In Cart: {getTotalAmount()} $</Text>
+          </View>
         </View>
       )}
     </>
@@ -150,18 +175,27 @@ export default Cart;
 const styles = StyleSheet.create({
   card: {
     flex: 1,
-    // alignItems: "center",
+    flexDirection: "row",
     margin: 10,
     borderColor: "black",
     borderWidth: 1,
-
     borderRadius: 10,
   },
   imgWrapper: {},
   image: {
-    width: "100%", // Set the desired width
-    // height: 100,
+    width: 100,
     aspectRatio: 1,
     borderRadius: 10,
+  },
+  innerContainer: {
+    flex: 1,
+    justifyContent: "space-between",
+    paddingHorizontal: 20,
+  },
+  priceTotalContainer: {
+    flex: 1,
+    flexDirection: "column-reverse",
+    alignItems: "flex-end",
+    marginHorizontal: 20,
   },
 });
