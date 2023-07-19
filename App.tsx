@@ -15,6 +15,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Icon from "react-native-vector-icons/Ionicons";
 import Cart from "./src/screens/Cart";
 import Order from "./src/screens/Order";
+import Profile from "./src/screens/Profile";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -99,6 +100,21 @@ function InsideLayout() {
           ),
         }}
       ></Tab.Screen>
+        <Tab.Screen
+            name="Profile"
+            component={Profile}
+            options={{
+                headerShown: true,
+                headerTintColor: "black",
+                tabBarLabelStyle: {
+                    color: "black",
+                    fontWeight: "bold",
+                },
+                tabBarIcon: ({ focused }) => (
+                    <Icon name={"list"} size={25} color="black" />
+                ),
+            }}
+        ></Tab.Screen>
     </Tab.Navigator>
   );
 }

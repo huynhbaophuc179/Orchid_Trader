@@ -1,89 +1,80 @@
 import React, { useState } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  TouchableOpacity,
-} from "react-native";
+import { StyleSheet, Text, View, TextInput, TouchableOpacity } from "react-native";
 
 const Order = () => {
-  // State to store user inputs
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
 
-  // Function to handle the order submission
   const handleOrderSubmit = () => {
-    // Perform the necessary actions with the user inputs here
-    // For example, send the order details to the server, etc.
-    // Reset the form after submitting if needed.
     setName("");
     setAddress("");
     setPhoneNumber("");
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.heading}>Order Form</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Name"
-        value={name}
-        onChangeText={(text) => setName(text)}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Address"
-        value={address}
-        onChangeText={(text) => setAddress(text)}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Phone Number"
-        value={phoneNumber}
-        onChangeText={(text) => setPhoneNumber(text)}
-        keyboardType="phone-pad"
-      />
-      <TouchableOpacity style={styles.submitButton} onPress={handleOrderSubmit}>
-        <Text style={styles.buttonText}>Submit Order</Text>
-      </TouchableOpacity>
-    </View>
+      <View style={styles.container}>
+        <Text style={styles.heading}>Order Form</Text>
+        <TextInput
+            style={styles.input}
+            placeholder="Name"
+            value={name}
+            onChangeText={(text) => setName(text)}
+        />
+        <TextInput
+            style={styles.input}
+            placeholder="Address"
+            value={address}
+            onChangeText={(text) => setAddress(text)}
+        />
+        <TextInput
+            style={styles.input}
+            placeholder="Phone Number"
+            value={phoneNumber}
+            onChangeText={(text) => setPhoneNumber(text)}
+            keyboardType="phone-pad"
+        />
+        <TouchableOpacity style={styles.submitButton} onPress={handleOrderSubmit}>
+          <Text style={styles.buttonText}>Submit Order</Text>
+        </TouchableOpacity>
+      </View>
   );
 };
-
-export default Order;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: "#f2f2f2",
+    paddingHorizontal: 20,
+    paddingTop: 50,
   },
   heading: {
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 20,
+    color: "#333",
   },
   input: {
     borderWidth: 1,
     borderColor: "#ccc",
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 15,
-    width: "100%",
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    marginBottom: 16,
+    fontSize: 16,
+    backgroundColor: "#fff",
   },
   submitButton: {
-    backgroundColor: "blue",
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 5,
-    marginTop: 20,
+    backgroundColor: "#ff6f00",
+    borderRadius: 8,
+    paddingVertical: 16,
+    alignItems: "center",
   },
   buttonText: {
-    color: "white",
-    fontSize: 16,
+    color: "#fff",
+    fontSize: 18,
     fontWeight: "bold",
   },
 });
+
+export default Order;
